@@ -50,10 +50,9 @@ namespace QuickOpener
             string atomName = Guid.NewGuid().ToString();
             _hotKeyId = GlobalAddAtom(atomName);
 
-            // Register CTRL+ALT+Up
+            // Register CTRL+ALT+SPACE
             RegisterHotKey(Handle, _hotKeyId, MOD_CONTROL | MOD_ALT, (int)Keys.Space);
         }
-
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -88,6 +87,19 @@ namespace QuickOpener
                 else if (string.Compare("hide", txtCommand.Text.Trim(), true) == 0)
                 {
                     this.Hide();
+
+                    // Add the command to the history
+                    _history.Add(txtCommand.Text);
+                    _historyPointer = _history.Count;
+
+                    txtCommand.Text = "";
+                }
+                else if (string.Compare("refresh", txtCommand.Text.Trim(), true) == 0)
+                {
+                    // trigger the application to re-read the config file
+                    ConfigurationManager.RefreshSection("appSettings");
+
+                    LogToScreen("config refreshed");
 
                     // Add the command to the history
                     _history.Add(txtCommand.Text);
